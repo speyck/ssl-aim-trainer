@@ -10,7 +10,7 @@ namespace ssl_aim_trainer.Classes
     /// </summary>
     public class ProcessChecker
     {
-        public delegate void ProcessFoundEventHandler(object sender, EventArgs e);
+        public delegate void ProcessFoundEventHandler(object sender, ProcessFoundEventArgs e);
 
         /// <summary>
         /// This event is raised when the provided process was found
@@ -51,7 +51,7 @@ namespace ssl_aim_trainer.Classes
                 if (Memory.OpenProcess(ProcessID))
                 {
                     // Raise event. '?.' is so that the event is only raised when it's subscribed, otherwise it would throw an exception
-                    ProcessFound?.Invoke(this, new EventArgs());
+                    ProcessFound?.Invoke(this, new ProcessFoundEventArgs(ProcessID, DateTime.Now));
 
                     return;
                 }
