@@ -37,12 +37,14 @@ namespace ssl_aim_trainer
             Checker.RunWorker();
         }
 
-        private void Checker_ProcessFound(object sender, EventArgs e)
+        private void Checker_ProcessFound(object sender, ProcessFoundEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
-                lblProcess.Content = "ProcessFound";
+                lblProcess.Content = $"Process \"{e.ProcessID}\" found";
             });
+
+            m.OpenProcess(e.ProcessID);
 
             PointerAddressReader YPosReader = new (PointerAddresses.YPosPlayer, "float", 100, m);
 
