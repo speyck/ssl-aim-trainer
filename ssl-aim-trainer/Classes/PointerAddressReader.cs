@@ -8,15 +8,40 @@ namespace ssl_aim_trainer.Classes
 {
     public class PointerAddressReader
     {
-        public delegate void GotAddressValueHandler(object sender, GotAddressValueEventArgs e);
-        public event GotAddressValueHandler GotAddressValue;
+        private readonly BackgroundWorker Worker = new()
+        {
+            WorkerSupportsCancellation = true
+        };
 
-        private readonly BackgroundWorker Worker = new();
         private readonly Mem m;
 
+        /// <summary>
+        /// EventHandler for the GotAddressValue Event
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public delegate void GotAddressValueHandler(object sender, GotAddressValueEventArgs e);
+
+        /// <summary>
+        /// Gets raised when a address is read (depending on the given interval)
+        /// </summary>
+        public event GotAddressValueHandler GotAddressValue;       
+
+        /// <summary>
+        /// The address that is being read off
+        /// </summary>
         public readonly string Address;
+
+        /// <summary>
+        /// What type is being read
+        /// </summary>
         public readonly string Type;
+
+        /// <summary>
+        /// With what delay should the address be read
+        /// </summary>
         public readonly int Interval;
+
         public readonly MemoryReadType ReadType;
 
         /// <summary>
@@ -47,12 +72,12 @@ namespace ssl_aim_trainer.Classes
         /// <summary>
         /// Starts the BackgroundWorker
         /// </summary>
-        public void RunWorker() => Worker.RunWorkerAsync();
+        public void Start() => Worker.RunWorkerAsync();
 
         /// <summary>
         /// Stops the BackgroundWorker
         /// </summary>
-        public void StopWorker() => Worker.CancelAsync();
+        public void Stop() => Worker.CancelAsync();
 
         private void Worker_DoWork(object sender, DoWorkEventArgs e)
         {

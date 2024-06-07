@@ -1,22 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 using ssl_aim_trainer.Globals;
 using ssl_aim_trainer.Classes;
 using Memory;
-using System.Threading;
 
 namespace ssl_aim_trainer
 {
@@ -26,18 +11,21 @@ namespace ssl_aim_trainer
 
         private readonly ProcessChecker Checker;
 
+        private PointerAddressReader YPosReader;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            Checker = new (PointerAddresses.ProcessID, memory: m);
+            Checker = new (PointerAddresses.ProcessID, m);
 
             Checker.ProcessFound += Checker_ProcessFound;
+            Checker.ProcessClosed += Checker_ProcessClosed;
 
-            Checker.RunWorker();
+            Checker.Start();
         }
 
-        private void Checker_ProcessFound(object sender, ProcessFoundEventArgs e)
+        private void Checker_ProcessFound(object sender, ProcessCheckerEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
@@ -46,15 +34,35 @@ namespace ssl_aim_trainer
 
             m.OpenProcess(e.ProcessID);
 
-            PointerAddressReader YPosReader = new (PointerAddresses.YPosPlayer, "float", 100, m);
+            YPosReader = new (PointerAddresses.YPosPlayer, "float", 100, m);
 
             YPosReader.GotAddressValue += YPosReader_GotAddressValue;
+
+            YPosReader.Start();
+        }
+
+        private void Checker_ProcessClosed(object sender, ProcessCheckerEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                lblProcess.Content = $"No process found";
+            });
+
+            m.CloseProcess();
+
+            YPosReader.GotAddressValue -= YPosReader_GotAddressValue;
+
+            YPosReader.Stop();
         }
 
         private void YPosReader_GotAddressValue(object sender, GotAddressValueEventArgs e)
         {
             float value = (float)e.Value;
-            lblPlayerY.Content = value.ToString();
+
+            Dispatcher.Invoke(() =>
+            {
+                lblPlayerY.Content = value.ToString();
+            });
         }
     }
 }
