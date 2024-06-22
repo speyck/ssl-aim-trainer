@@ -1,20 +1,21 @@
 // lib
 #include "forms/MainWindow.h"
+#include "process/check_process.h"
 
 // qt
 #include <QDebug>
 
+const char* processName = "ShellShockLive.exe";
+
 MainWindow::MainWindow() 
 {
-	qDebug() << "Hello World!";
-
-    // Create the label and set its text
-    label = new QLabel("Hello, Qt!", this);
-    // Optionally, set the geometry of the label
-    label->setGeometry(10, 10, 200, 30);
+	QString status = is_process_running(processName) ? "Running" : "Not Running";
+	QString text = QString("%1-Status: %2").arg(processName, status);
+	QLabel* statusLabel = new QLabel(text, this);
+	statusLabel->setGeometry(10, 10, 200, 30);
 
     // Set the title and size of the main window
     setWindowTitle("Main Window");
-    resize(800, 600);
+    resize(400, 300);
 }
 
