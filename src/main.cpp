@@ -1,43 +1,19 @@
-// std
-#include <iostream>
-
 // qt
-#include <QString>
-#include <QDebug>
-#include <QProcess>
+#include <QApplication>
+#include <QWidget>
 
-// defines
-constexpr const char* SSL_PROCESS_ID = "ShellShockLive";
+// lib
+#include "forms/MainWindow.h"
 
-bool is_process_running(const QString& name) 
+int main(int argc, char *argv[])
 {
-    QProcess process;
-
-    process.start("ps -A -o comm=");
-    process.waitForFinished();
-
-    QString output(process.readAllStandardOutput());
-    QStringList list = output.split('\n');
-
-    bool isRunning = list.filter(name).size() > 0;
-
-    if (isRunning)
-        qInfo() << "Process" << name << "is running.";
-    else
-        qInfo() << "Processs" << name << "is not running.";
-
-    return isRunning;
-}
-
-int main() 
-{
-    qInfo() << "Started SSL Aim Trainer";
-
-    if (!is_process_running(SSL_PROCESS_ID))
-        return 0;
-
+    QApplication app(argc, argv);
     
+    QWidget window;
+    window.resize(250, 150);
+    window.setWindowTitle("Simple Qt Application");
+    window.show();
 
-
-    return 0;
+    return app.exec();
 }
+

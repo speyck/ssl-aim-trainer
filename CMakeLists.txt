@@ -1,22 +1,48 @@
-# Specify the minimum version for CMake
 cmake_minimum_required(VERSION 3.26)
 
+set(VERSION 1.0.0)
+
 # Project's name
-project(ssl-aim-trainer VERSION 1.0.0 LANGUAGES CXX)
+if (WIN32)
+    project(ssl-aim-trainer VERSION ${VERSION} LANGUAGES CXX)
+elseif(UNIX)
+    project(ssl-aim-trainer VERSION ${VERSION})
+endif()
+
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add the path to the Qt6 installation
-list(APPEND CMAKE_PREFIX_PATH "D:/Qt/6.7.1/msvc2019_64/lib/cmake/Qt6")
+# Correct the typo and set Qt paths
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_PREFIX_PATH $ENV{QTDIR})
+find_package(Qt6Core REQUIRED)
+find_package(Qt6Widgets REQUIRED)
 
-# Link Qt
-find_package(Qt6 COMPONENTS Core REQUIRED)
-qt_standard_project_setup()
+# Add source dirs
+set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 
-qt_add_executable(${PROJECT_NAME}
-    src/main.cpp
+include_directories(${INCLUDE_DIR})
+
+file(GLOB_RECURSE SOURCES
+    ${INCLUDE_DIR}/*.h
+    ${SOURCE_DIR}/*.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Core)
+# Add executable
+if (WIN32)
+    add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+elseif(UNIX)
+    add_executable(${PROJECT_NAME} ${SOURCES})
+endif()
+
+# Add target includes
+target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${SOURCE_DIR})
+
+# Link Qt
+target_link_libraries(${PROJECT_NAME} Qt6::Widgets)
