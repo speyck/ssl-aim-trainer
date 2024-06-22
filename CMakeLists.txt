@@ -14,6 +14,11 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+if(MSVC)
+  add_compile_options("/Zc:__cplusplus")
+endif()
 
 # Correct the typo and set Qt paths
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
