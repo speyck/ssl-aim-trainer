@@ -13,10 +13,6 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
 
-	// TODO : find out where tf this output goes
-	std::cout << "Hello World!" << std::endl;
-	qDebug() << "Hello World!";
-
 	MainWindow window;
 	window.show();
     
