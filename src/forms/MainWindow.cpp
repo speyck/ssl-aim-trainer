@@ -1,7 +1,8 @@
 // lib
 #include "forms/MainWindow.h"
-#if WIN32
+#ifdef WIN32
 #include "process/WinProcess.h"
+#define CreateProcess new WinProcess
 #endif
 
 // qt
@@ -11,9 +12,7 @@ const char* processName = "ShellShockLive.exe";
 
 MainWindow::MainWindow() 
 {
-#if WIN32
-	process = new WinProcess(processName);
-#endif
+	process = CreateProcess(processName);
 
 	QString status = process->is_running() ? "Running" : "Not Running";
 	QString text = QString("%1-Status: %2").arg(processName, status);
